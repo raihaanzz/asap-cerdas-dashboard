@@ -1,0 +1,386 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASAP CERDAS | Dashboard Data</title>
+<style>
+:root {
+  --green: #174b3b;
+  --green2: #23664e;
+  --bg: #f4f7f4;
+  --text: #20342b;
+  --muted: #68786e;
+  --border: #dfe8e1;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+header {
+  background: var(--green);
+  color: white;
+  padding: 30px 20px;
+}
+.wrap { max-width: 1080px; margin: auto; }
+header h1 { margin: 0; font-size: 30px; }
+header p { margin: 5px 0 0; color: #e1eee6; }
+main { max-width: 1080px; margin: 24px auto; padding: 0 16px; }
+h2 { font-size: 21px; margin: 0 0 14px; }
+h3 { font-size: 16px; margin: 0 0 8px; }
+.section { margin-bottom: 24px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  min-width: 0;
+}
+.metric { font-size: 29px; font-weight: bold; color: var(--green); }
+.muted { color: var(--muted); font-size: 13px; }
+.status { font-size: 13px; margin-top: 8px; color: var(--muted); }
+ul { padding-left: 19px; margin-bottom: 0; }
+li { margin-bottom: 8px; overflow-wrap: anywhere; }
+a { color: var(--green2); }
+button, select {
+  padding: 10px 13px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  font: inherit;
+}
+button { cursor: pointer; }
+button:hover { background: #edf5ef; }
+.controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.article { border-bottom: 1px solid var(--border); padding: 12px 0; }
+.article:last-child { border-bottom: 0; }
+.article a { font-weight: bold; text-decoration: none; }
+.badge {
+  display: inline-block;
+  background: #e8f2eb;
+  color: var(--green);
+  border-radius: 20px;
+  padding: 3px 9px;
+  font-size: 12px;
+  margin: 3px;
+}
+footer { text-align: center; padding: 24px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>ASAP CERDAS</h1>
+    <p>Dashboard edukasi kebakaran hutan, kabut asap, dan kondisi lingkungan.</p>
+    <p class="muted" style="color:#e1eee6">Data diperbarui saat dashboard dimuat.</p>
+  </div>
+</header>
+
+<main>
+  <section class="section">
+    <h2>Ringkasan Integrasi API</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="muted">Artikel WordPress</div>
+        <div class="metric" id="postCount">—</div>
+        <div class="status" id="postStatus">Memuat artikel...</div>
+      </div>
+      <div class="card">
+        <div class="muted">Halaman WordPress</div>
+        <div class="metric" id="pageCount">—</div>
+        <div class="status" id="pageStatus">Memuat halaman...</div>
+      </div>
+      <div class="card">
+        <div class="muted">Kategori</div>
+        <div class="metric" id="categoryCount">—</div>
+        <div class="status" id="categoryStatus">Memuat kategori...</div>
+      </div>
+      <div class="card">
+        <div class="muted">Komentar</div>
+        <div class="metric" id="commentCount">—</div>
+        <div class="status" id="commentStatus">Memuat komentar...</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section card">
+    <h2>Cuaca Semarang</h2>
+    <p class="muted">Data cuaca berasal dari Open-Meteo, bukan pengukuran kualitas udara.</p>
+    <div class="grid">
+      <div><div class="muted">Suhu</div><div class="metric" id="temperature">—</div></div>
+      <div><div class="muted">Kelembapan</div><div class="metric" id="humidity">—</div></div>
+      <div><div class="muted">Kecepatan angin</div><div class="metric" id="wind">—</div></div>
+    </div>
+    <div class="status" id="weatherStatus">Mengambil data cuaca...</div>
+    <p class="muted">Waktu data: <span id="weatherTime">—</span></p>
+  </section>
+
+  <section class="section card">
+    <h2>Artikel Edukasi</h2>
+    <div class="controls">
+      <select id="categoryFilter" aria-label="Filter kategori">
+        <option value="">Semua kategori</option>
+      </select>
+      <button id="refreshButton">Muat ulang data</button>
+    </div>
+    <div id="articles">Memuat artikel dari WordPress...</div>
+  </section>
+
+  <section class="section card">
+    <h2>Kategori Artikel</h2>
+    <div id="categories">Memuat kategori...</div>
+  </section>
+
+  <section class="section card">
+    <h2>Tag Artikel</h2>
+    <div id="tags">Memuat tag...</div>
+  </section>
+
+  <section class="section card">
+    <h2>Halaman Edukasi</h2>
+    <div id="pages">Memuat halaman...</div>
+  </section>
+
+  <section class="section card">
+    <h2>Diskusi Pengunjung</h2>
+    <p class="muted">Komentar terbaru yang tersedia secara publik di WordPress.</p>
+    <div id="comments">Memuat komentar...</div>
+  </section>
+
+  <section class="section card">
+    <h2>Catatan Data</h2>
+    <p>Dashboard ini mengambil data publik melalui API. Jumlah titik panas kebakaran dan kualitas udara belum ditampilkan pada versi awal ini. Data cuaca tidak boleh digunakan sebagai pengganti pengukuran polusi atau peringatan resmi.</p>
+    <p class="muted">Sumber: WordPress.com API dan Open-Meteo.</p>
+  </section>
+</main>
+
+<footer>ASAP CERDAS · Pusat Edukasi Kabut Asap dan Kebakaran Hutan</footer>
+
+<script>
+const API = "https://public-api.wordpress.com/rest/v1.1/sites/edukasiasap.wordpress.com";
+const $ = id => document.getElementById(id);
+let allPosts = [];
+let allCategories = [];
+
+async function getJSON(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("HTTP " + response.status);
+  return response.json();
+}
+
+function showError(id, message) {
+  $(id).textContent = message;
+}
+
+function safeDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" :
+    date.toLocaleDateString("id-ID", {
+      day: "numeric", month: "short", year: "numeric"
+    });
+}
+
+function makeLink(url, title) {
+  const a = document.createElement("a");
+  a.href = url;
+  a.textContent = title;
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  return a;
+}
+
+function renderPosts() {
+  const chosen = $("categoryFilter").value;
+  const filtered = allPosts.filter(post => {
+    if (!chosen) return true;
+    return Object.values(post.categories || {}).some(
+      category => String(category.ID) === chosen
+    );
+  });
+
+  const container = $("articles");
+  container.replaceChildren();
+
+  if (!filtered.length) {
+    container.textContent = "Belum ada artikel untuk kategori ini.";
+    return;
+  }
+
+  filtered.forEach(post => {
+    const item = document.createElement("div");
+    item.className = "article";
+    item.appendChild(makeLink(post.URL || post.short_URL || "#", post.title || "Artikel tanpa judul"));
+
+    const detail = document.createElement("div");
+    detail.className = "muted";
+    detail.textContent = safeDate(post.date);
+    item.appendChild(detail);
+
+    if (post.excerpt) {
+      const excerpt = document.createElement("p");
+      excerpt.textContent = post.excerpt.replace(/<[^>]*>/g, "").trim();
+      item.appendChild(excerpt);
+    }
+    container.appendChild(item);
+  });
+}
+
+async function loadPosts() {
+  try {
+    const data = await getJSON(API + "/posts/?number=20");
+    allPosts = data.posts || [];
+    $("postCount").textContent = data.found ?? allPosts.length;
+    $("postStatus").textContent = "Berhasil dimuat dari WordPress API";
+    renderPosts();
+  } catch (error) {
+    showError("postStatus", "Gagal memuat artikel: " + error.message);
+    showError("articles", "Data artikel tidak dapat diambil. Coba muat ulang.");
+  }
+}
+
+async function loadPages() {
+  try {
+    const data = await getJSON(API + "/posts/?type=page&number=20");
+    const pages = data.posts || [];
+    $("pageCount").textContent = data.found ?? pages.length;
+    $("pageStatus").textContent = "Berhasil dimuat dari WordPress API";
+    const list = document.createElement("ul");
+    pages.forEach(page => {
+      const li = document.createElement("li");
+      li.appendChild(makeLink(page.URL || "#", page.title || "Halaman tanpa judul"));
+      list.appendChild(li);
+    });
+    $("pages").replaceChildren(list);
+    if (!pages.length) $("pages").textContent = "Belum ada halaman publik yang ditemukan.";
+  } catch (error) {
+    showError("pageStatus", "Gagal memuat halaman: " + error.message);
+    showError("pages", "Halaman tidak dapat dimuat.");
+  }
+}
+
+async function loadCategories() {
+  try {
+    const data = await getJSON(API + "/categories/?pretty=true");
+    allCategories = data.categories || [];
+    $("categoryCount").textContent = allCategories.length;
+    $("categoryStatus").textContent = "Berhasil dimuat dari WordPress API";
+
+    const filter = $("categoryFilter");
+    allCategories.forEach(category => {
+      const option = document.createElement("option");
+      option.value = String(category.ID);
+      option.textContent = category.name;
+      filter.appendChild(option);
+    });
+
+    const container = $("categories");
+    container.replaceChildren();
+    if (!allCategories.length) {
+      container.textContent = "Belum ada kategori.";
+      return;
+    }
+    allCategories.forEach(category => {
+      const badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = category.name + " (" + (category.post_count ?? 0) + ")";
+      container.appendChild(badge);
+    });
+  } catch (error) {
+    showError("categoryStatus", "Gagal memuat kategori: " + error.message);
+    showError("categories", "Kategori tidak dapat dimuat.");
+  }
+}
+
+async function loadTags() {
+  try {
+    const data = await getJSON(API + "/tags/?pretty=true");
+    const tags = data.tags || [];
+    const container = $("tags");
+    container.replaceChildren();
+    if (!tags.length) {
+      container.textContent = "Belum ada tag publik.";
+      return;
+    }
+    tags.forEach(tag => {
+      const badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = tag.name;
+      container.appendChild(badge);
+    });
+  } catch (error) {
+    showError("tags", "Tag tidak dapat dimuat: " + error.message);
+  }
+}
+
+async function loadComments() {
+  try {
+    const data = await getJSON(API + "/comments/?pretty=true");
+    const comments = data.comments || [];
+    $("commentCount").textContent = data.found ?? comments.length;
+    $("commentStatus").textContent = "Berhasil dimuat dari WordPress API";
+    const list = document.createElement("ul");
+
+    comments.slice(0, 8).forEach(comment => {
+      const li = document.createElement("li");
+      const author = comment.author?.name || comment.author_name || "Pengunjung";
+      const content = (comment.content || "").replace(/<[^>]*>/g, "").trim();
+      li.textContent = author + ": " + (content || "(komentar tanpa teks)");
+      list.appendChild(li);
+    });
+    $("comments").replaceChildren(list);
+    if (!comments.length) $("comments").textContent = "Belum ada komentar publik.";
+  } catch (error) {
+    showError("commentStatus", "Gagal memuat komentar: " + error.message);
+    showError("comments", "Komentar tidak dapat dimuat.");
+  }
+}
+
+async function loadWeather() {
+  const url = "https://api.open-meteo.com/v1/forecast" +
+    "?latitude=-6.99&longitude=110.42" +
+    "&current=temperature_2m,relative_humidity_2m,wind_speed_10m" +
+    "&timezone=Asia%2FJakarta";
+
+  try {
+    const data = await getJSON(url);
+    const current = data.current;
+    if (!current) throw new Error("Data cuaca saat ini tidak tersedia");
+
+    $("temperature").textContent = current.temperature_2m + " °C";
+    $("humidity").textContent = current.relative_humidity_2m + " %";
+    $("wind").textContent = current.wind_speed_10m + " km/jam";
+    $("weatherTime").textContent = current.time || "Tidak tersedia";
+    $("weatherStatus").textContent = "Data berhasil diambil dari Open-Meteo.";
+  } catch (error) {
+    showError("weatherStatus", "Cuaca gagal dimuat: " + error.message);
+  }
+}
+
+async function loadDashboard() {
+  $("refreshButton").disabled = true;
+  $("refreshButton").textContent = "Memuat...";
+  await Promise.allSettled([
+    loadPosts(), loadPages(), loadCategories(), loadTags(),
+    loadComments(), loadWeather()
+  ]);
+  $("refreshButton").disabled = false;
+  $("refreshButton").textContent = "Muat ulang data";
+}
+
+$("categoryFilter").addEventListener("change", renderPosts);
+$("refreshButton").addEventListener("click", loadDashboard);
+loadDashboard();
+</script>
+</body>
+</html>
